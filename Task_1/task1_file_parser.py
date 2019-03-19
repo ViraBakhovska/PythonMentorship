@@ -33,7 +33,7 @@ def print_top_downloader(grouped_by_date):
 
 def get_least_busy_hours(record_list):
     """This function get the hour that has the least number of requests"""
-    list_of_hours = dict.fromkeys(range(00, 24), 0)
+    list_of_hours = dict.fromkeys(range(0, 24), 0)
     for record  in record_list:
         list_of_hours[record['Datetime'].hour] += 1
     least_busy_hour = (min(list_of_hours, key=list_of_hours.get),
