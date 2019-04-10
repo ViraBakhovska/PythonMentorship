@@ -1,4 +1,4 @@
-﻿"""This module creates {username}/{project} folders
+"""This module creates {username}/{project} folders
 and download the avatar picture files with names
 that match GitHub contributor’s login"""
 import argparse
@@ -6,19 +6,20 @@ import json
 import os
 import requests
 
-USER_NAME = 'ViraBakhovska'
-TOKEN = ''
-
-gh_session = requests.Session()
-gh_session.auth = (USER_NAME, TOKEN)
-
 
 parser = argparse.ArgumentParser(description='Extract github avatars')
 parser.add_argument('-u', "--user", action='store', #required = True,
                     default='kennethreitz', help = 'GitHub user login')
 parser.add_argument('-p', "--project", action='store', #required = True,
                     default='requests', help = 'GitHub project name')
+parser.add_argument('-l', "--login", action='store', #required = True,
+                    help = 'GitHub user login for authorization')
+parser.add_argument('-t', "--token", action='store', #required = True,
+                    help = 'GitHub token')
 args = parser.parse_args()
+
+gh_session = requests.Session()
+gh_session.auth = (args.login, args.token)
 
 
 def get_contributors_avatar_dict(api_url):
@@ -52,8 +53,7 @@ for contributor in contributors_avatar_dict:
     file_extension = contributor_response.headers['Content-Type'].split('/')[1]
 
     if file_extension in ['jpeg', 'png']:
-        image_name = f'{folder_name}\\{contributor["login"]}.{file_extension}'
-
+        image_name = os.path.join(folder_name, '.'.join((contributor["login"], file_extension)))
         with open(image_name, 'wb') as image:
             for chunk in contributor_response.iter_content(chunk_size=128):
                 image.write(chunk)
